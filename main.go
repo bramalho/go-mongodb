@@ -16,20 +16,18 @@ import (
 
 var client *mongo.Client
 
-const Database = "app_db"
-const Collection = "people"
-
 type Person struct {
 	ID        primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	Firstname string             `json:"firstname,omitempty" bson:"firstname,omitempty"`
 	Lastname  string             `json:"lastname,omitempty" bson:"lastname,omitempty"`
+	Age       int                `json:"age,omitempty" bson:"age,omitempty"`
 }
 
 func CreatePersonEndpoint(response http.ResponseWriter, request *http.Request) {
 	var person Person
 	_ = json.NewDecoder(request.Body).Decode(&person)
 
-	collection := client.Database(Database).Collection(Collection)
+	collection := client.Database("app_db").Collection("people")
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 
 	result, err := collection.InsertOne(ctx, person)
@@ -43,7 +41,7 @@ func CreatePersonEndpoint(response http.ResponseWriter, request *http.Request) {
 
 func GetPeopleEndpoint(response http.ResponseWriter, request *http.Request) {
 	var people []Person
-	collection := client.Database(Database).Collection(Collection)
+	collection := client.Database("app_db").Collection("people")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 
 	cursor, err := collection.Find(ctx, bson.M{})
@@ -74,7 +72,7 @@ func GetPersonEndpoint(response http.ResponseWriter, request *http.Request) {
 	id, _ := primitive.ObjectIDFromHex(params["id"])
 
 	var person Person
-	collection := client.Database(Database).Collection(Collection)
+	collection := client.Database("app_db").Collection("people")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	err := collection.FindOne(ctx, Person{ID: id}).Decode(&person)
 	if err != nil {
