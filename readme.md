@@ -12,4 +12,4 @@
 
 [GET /people](http://localhost:8088/people)
 
-[GET /person/{id}](http://localhost:8088/person/{id})
+[GET /person/{id}](http://localhost:8088/person/123)
